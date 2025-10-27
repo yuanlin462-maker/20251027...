@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sketch</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
+  </head>
+
+  <body>
+    <div id="left-sensor" aria-hidden="true"></div>
+    <nav id="side-menu" aria-label="側選單">
+      <ul>
+        <li><a href="#" id="open-first">第一單元作品</a></li>
+        <li><a href="#" id="open-lecture">第一單元講義</a></li>
+        <li><a href="#">測驗系統</a></li>
+        <li><a href="#">回到首頁</a></li>
+      </ul>
+    </nav>
+    <script src="sketch.js"></script>
+
+    <!-- IFrame overlay for 第一單元作品 -->
+    <div id="iframe-overlay" aria-hidden="true">
+      <div class="iframe-container" role="dialog" aria-modal="true">
+        <button id="iframe-close" aria-label="關閉">✕</button>
+        <iframe id="content-iframe" src="" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        const openBtn = document.getElementById('open-first');
+        const openLectureBtn = document.getElementById('open-lecture');
+        const overlay = document.getElementById('iframe-overlay');
+        const iframe = document.getElementById('content-iframe');
+        const closeBtn = document.getElementById('iframe-close');
+        const TARGET_URL_FIRST = 'https://yuanlin462-maker.github.io/20251023/';
+        const TARGET_URL_LECTURE = 'https://hackmd.io/@7rBboAa3RqOGLEs-AyYk_w/rJZIclBseg';
+
+        function openIframe(url) {
+          iframe.src = url;
+          overlay.classList.add('active');
+          overlay.setAttribute('aria-hidden', 'false');
+          // disable scrolling in page (redundant but safe)
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeIframe() {
+          overlay.classList.remove('active');
+          overlay.setAttribute('aria-hidden', 'true');
+          // unload iframe to stop audio/video
+          try { iframe.src = 'about:blank'; } catch(e) {}
+          document.body.style.overflow = '';
+        }
+
+        openBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          openIframe(TARGET_URL_FIRST);
+        });
+
+        openLectureBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          openIframe(TARGET_URL_LECTURE);
+        });
+
+        closeBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          closeIframe();
+        });
+
+        // click outside the container closes
+        overlay.addEventListener('click', function(e){
+          if (e.target === overlay) closeIframe();
+        });
+
+        // Esc closes
+        window.addEventListener('keydown', function(e){
+          if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            closeIframe();
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
